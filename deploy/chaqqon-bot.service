@@ -1,0 +1,14 @@
+[Unit]
+Description=Chaqqon Robot Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/chaqqon-bot
+ExecStart=/home/ubuntu/chaqqon-bot/venv/bin/python bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
