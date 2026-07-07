@@ -25,6 +25,10 @@ LINK_PATTERN = re.compile(
 
 MAX_FILE_SIZE = 50 * 1024 * 1024  # Telegram bot API limit
 
+# YouTube bulut serverlarni bloklaydi ("Sign in to confirm you're not a bot").
+# Yonida cookies.txt bo'lsa, uni ishlatib blokdan o'tamiz.
+COOKIES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cookies.txt")
+
 
 def download_video(url: str, out_dir: str) -> str:
     ydl_opts = {
@@ -34,6 +38,8 @@ def download_video(url: str, out_dir: str) -> str:
         "noplaylist": True,
         "no_warnings": True,
     }
+    if os.path.exists(COOKIES_FILE):
+        ydl_opts["cookiefile"] = COOKIES_FILE
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         return ydl.prepare_filename(info)
