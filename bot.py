@@ -32,7 +32,11 @@ COOKIES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cookies
 
 def download_video(url: str, out_dir: str) -> str:
     ydl_opts = {
-        "format": "best[height<=720][ext=mp4]/best[ext=mp4]/best",
+        "format": (
+            "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/"
+            "best[height<=720][ext=mp4]/best[height<=720]/best"
+        ),
+        "merge_output_format": "mp4",
         "outtmpl": os.path.join(out_dir, "%(id)s.%(ext)s"),
         "quiet": True,
         "noplaylist": True,
