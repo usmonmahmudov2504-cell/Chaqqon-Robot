@@ -7,6 +7,8 @@ import tempfile
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, F
 from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.client.telegram import TelegramAPIServer
 from aiogram.enums import ChatAction, ParseMode
 from aiogram.filters import CommandStart, Command
 from aiogram.types import FSInputFile, Message
@@ -15,15 +17,25 @@ from yt_dlp import YoutubeDL
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(os.getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+# Agar o'z Bot API serverimiz bo'lsa (LOCAL_BOT_API), fayl cheklovi 50 MB -> 2 GB.
+_local_api = os.getenv("LOCAL_BOT_API")
+if _local_api:
+    _session = AiohttpSession(api=TelegramAPIServer.from_base(_local_api))
+    bot = Bot(
+        os.getenv("BOT_TOKEN"),
+        session=_session,
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+    )
+    MAX_FILE_SIZE = 2000 * 1024 * 1024  # o'z serverimiz: 2 GB gacha
+else:
+    bot = Bot(os.getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    MAX_FILE_SIZE = 50 * 1024 * 1024  # standart Telegram cheklovi
 dp = Dispatcher()
 
 LINK_PATTERN = re.compile(
     r"(https?://(?:www\.)?(?:youtube\.com|youtu\.be|instagram\.com)/\S+)",
     re.IGNORECASE,
 )
-
-MAX_FILE_SIZE = 50 * 1024 * 1024  # Telegram bot API limit
 
 # YouTube bulut serverlarni bloklaydi ("Sign in to confirm you're not a bot").
 # Yonida cookies.txt bo'lsa, uni ishlatib blokdan o'tamiz.
