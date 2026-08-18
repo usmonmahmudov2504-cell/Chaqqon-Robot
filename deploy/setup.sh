@@ -2,7 +2,10 @@
 set -e
 
 sudo apt update
-sudo apt install -y python3-venv python3-pip ffmpeg
+# ffmpeg - video va audio oqimlarini birlashtirish uchun.
+# nodejs - YouTube pleyerining JS challenge'ini yechish uchun (usiz
+# YouTube formatlari topilmaydi).
+sudo apt install -y python3-venv python3-pip ffmpeg nodejs
 
 mkdir -p ~/chaqqon-bot
 cd ~/chaqqon-bot
